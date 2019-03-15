@@ -37,7 +37,7 @@ namespace fc
    void from_variant( const variant &var, account_multi_index_type &vo, uint32_t max_depth );
 }
 
-namespace graphene { namespace wallet {
+namespace graphene::wallet {
 
 typedef uint16_t transaction_handle_type;
 
@@ -46,7 +46,7 @@ typedef uint16_t transaction_handle_type;
  * of the given type, with the new operator.
  */
 
-object* create_object( const variant& v );
+object* create_object( const std::variant& v );
 
 struct plain_keys
 {
@@ -318,12 +318,12 @@ class wallet_api
 
       fc::ecc::private_key derive_private_key(const std::string& prefix_string, int sequence_number) const;
 
-      variant                           info();
+      std::variant                      info();
       /** Returns info such as client version, git version of graphene/fc, version of boost, openssl.
        * @returns compile time info and client and dependencies versions
        */
       variant_object                    about() const;
-      optional<signed_block_with_info>    get_block( uint32_t num );
+      std::optional<signed_block_with_info>    get_block( uint32_t num );
       /** Returns the number of accounts registered on the blockchain
        * @returns the number of registered accounts
        */
@@ -425,8 +425,8 @@ class wallet_api
                                             const string &base,
                                             const string &quote,
                                             uint32_t limit = 101,
-                                            optional<limit_order_id_type> ostart_id = optional<limit_order_id_type>(),
-                                            optional<price> ostart_price = optional<price>());
+                                            optional<limit_order_id_type> ostart_id = std::optional<limit_order_id_type>(),
+                                            optional<price> ostart_price = std::optional<price>());
 
       vector<limit_order_object>        get_limit_orders(string a, string b, uint32_t limit)const;
       vector<call_order_object>         get_call_orders(string a, uint32_t limit)const;
@@ -514,7 +514,7 @@ class wallet_api
        * @param id the id of the object to return
        * @returns the requested object
        */
-      variant                           get_object(object_id_type id) const;
+      std::variant                      get_object(object_id_type id) const;
 
       /** Returns the current wallet filename.  
        *
@@ -1117,7 +1117,7 @@ class wallet_api
        * @returns the signed transaction updating the asset
        */
       signed_transaction update_asset(string symbol,
-                                      optional<string> new_issuer,
+                                      std::optional<string> new_issuer,
                                       asset_options new_options,
                                       bool broadcast = false);
 
@@ -1431,7 +1431,7 @@ class wallet_api
          share_type daily_pay,
          string name,
          string url,
-         variant worker_settings,
+         std::variant worker_settings,
          bool broadcast = false
          );
 
@@ -1532,7 +1532,7 @@ class wallet_api
        * @return the signed transaction changing your vote proxy settings
        */
       signed_transaction set_voting_proxy(string account_to_modify,
-                                          optional<string> voting_account,
+                                          std::optional<string> voting_account,
                                           bool broadcast = false);
       
       /** Set your vote for the number of witnesses and committee_members in the system.

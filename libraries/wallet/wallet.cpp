@@ -89,7 +89,7 @@ namespace fc {
                                 // commitments the length of the range proof will hint
                                 // strongly at the value amount that is being hidden.
 
-namespace graphene { namespace wallet {
+namespace graphene::wallet {
 
 namespace detail {
 
@@ -2959,7 +2959,7 @@ namespace graphene { namespace wallet {
    }
 }}
 
-namespace graphene { namespace wallet {
+namespace graphene::wallet {
 
 wallet_api::wallet_api(const wallet_data& initial_data, fc::api<login_api> rapi)
    : my(new detail::wallet_api_impl(*this, initial_data, rapi))
