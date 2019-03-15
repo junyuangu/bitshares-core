@@ -136,7 +136,7 @@ public:
 };
 
 template<class T>
-optional<T> maybe_id( const string& name_or_id )
+fc::optional<T> maybe_id( const string& name_or_id )
 {
    if( std::isdigit( name_or_id.front() ) )
    {
@@ -148,7 +148,7 @@ optional<T> maybe_id( const string& name_or_id )
       { // not an ID
       }
    }
-   return optional<T>();
+   return fc::optional<T>();
 }
 
 string address_to_shorthash( const address& addr )
@@ -453,7 +453,7 @@ public:
       }
    }
 
-   void on_block_applied( const variant& block_id )
+   void on_block_applied( const fc::variant& block_id )
    {
       fc::async([this]{resync();}, "Resync after block");
    }
@@ -509,7 +509,7 @@ public:
          s.set_fee(op);
    }
 
-   variant info() const
+   fc::variant info() const
    {
       auto chain_props = get_chain_properties();
       auto global_props = get_global_properties();
@@ -614,12 +614,12 @@ public:
                              "." + fc::to_string(id.instance.value);
       return asset_id;
    }
-   optional<asset_object> find_asset(asset_id_type id)const
+   fc::optional<asset_object> find_asset(asset_id_type id)const
    {
       auto rec = _remote_db->get_assets({asset_id_to_string(id)}).front();
       return rec;
    }
-   optional<asset_object> find_asset(string asset_symbol_or_id)const
+   fc::optional<asset_object> find_asset(string asset_symbol_or_id)const
    {
       FC_ASSERT( asset_symbol_or_id.size() > 0 );
 
@@ -633,7 +633,7 @@ public:
          if( rec )
          {
             if( rec->symbol != asset_symbol_or_id )
-               return optional<asset_object>();
+               return fc::optional<asset_object>();
          }
          return rec;
       }
@@ -654,7 +654,7 @@ public:
    asset_id_type get_asset_id(string asset_symbol_or_id) const
    {
       FC_ASSERT( asset_symbol_or_id.size() > 0 );
-      vector<optional<asset_object>> opt_asset;
+      vector<fc::optional<asset_object>> opt_asset;
       if( std::isdigit( asset_symbol_or_id.front() ) )
          return fc::variant(asset_symbol_or_id, 1).as<asset_id_type>( 1 );
       opt_asset = _remote_db->lookup_asset_symbols( {asset_symbol_or_id} );
@@ -1207,14 +1207,14 @@ public:
    } FC_CAPTURE_AND_RETHROW( (issuer)(symbol)(precision)(common)(bitasset_opts)(broadcast) ) }
 
    signed_transaction update_asset(string symbol,
-                                   optional<string> new_issuer,
+                                   std::optional<string> new_issuer,
                                    asset_options new_options,
                                    bool broadcast /* = false */)
    { try {
-      optional<asset_object> asset_to_update = find_asset(symbol);
+      fc::optional<asset_object> asset_to_update = find_asset(symbol);
       if (!asset_to_update)
         FC_THROW("No asset with that symbol exists!");
-      optional<account_id_type> new_issuer_account_id;
+      fc::optional<account_id_type> new_issuer_account_id;
       if (new_issuer)
       {
         FC_ASSERT( _remote_db->get_dynamic_global_properties().time < HARDFORK_CORE_199_TIME,
@@ -1627,7 +1627,7 @@ public:
    } FC_CAPTURE_AND_RETHROW( (witness_name)(url)(block_signing_key)(broadcast) ) }
 
    template<typename WorkerInit>
-   static WorkerInit _create_worker_initializer( const variant& worker_settings )
+   static WorkerInit _create_worker_initializer( const fc::variant& worker_settings )
    {
       WorkerInit result;
       from_variant( worker_settings, result, GRAPHENE_MAX_NESTED_OBJECTS );
@@ -1641,7 +1641,7 @@ public:
       share_type daily_pay,
       string name,
       string url,
-      variant worker_settings,
+      fc::variant worker_settings,
       bool broadcast
       )
    {
@@ -1885,7 +1885,7 @@ public:
    } FC_CAPTURE_AND_RETHROW( (voting_account)(witness)(approve)(broadcast) ) }
 
    signed_transaction set_voting_proxy(string account_to_modify,
-                                       optional<string> voting_account,
+                                       std::optional<string> voting_account,
                                        bool broadcast /* = false */)
    { try {
       account_object account_object_to_modify = get_account(account_to_modify);
@@ -2690,7 +2690,7 @@ public:
       }
    }
 
-   vector< variant > network_get_connected_peers()
+   vector< fc::variant > network_get_connected_peers()
    {
       use_network_node_api();
       const auto peers = (*_remote_net_node)->get_connected_peers();

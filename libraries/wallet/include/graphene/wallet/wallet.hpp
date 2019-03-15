@@ -46,7 +46,7 @@ typedef uint16_t transaction_handle_type;
  * of the given type, with the new operator.
  */
 
-object* create_object( const std::variant& v );
+object* create_object( const fc::variant& v );
 
 struct plain_keys
 {
@@ -318,12 +318,12 @@ class wallet_api
 
       fc::ecc::private_key derive_private_key(const std::string& prefix_string, int sequence_number) const;
 
-      std::variant                      info();
+      fc::variant                       info();
       /** Returns info such as client version, git version of graphene/fc, version of boost, openssl.
        * @returns compile time info and client and dependencies versions
        */
       variant_object                    about() const;
-      std::optional<signed_block_with_info>    get_block( uint32_t num );
+      fc::optional<signed_block_with_info>  get_block( uint32_t num );
       /** Returns the number of accounts registered on the blockchain
        * @returns the number of registered accounts
        */
@@ -425,8 +425,8 @@ class wallet_api
                                             const string &base,
                                             const string &quote,
                                             uint32_t limit = 101,
-                                            optional<limit_order_id_type> ostart_id = std::optional<limit_order_id_type>(),
-                                            optional<price> ostart_price = std::optional<price>());
+                                            fc::optional<limit_order_id_type> ostart_id = fc::optional<limit_order_id_type>(),
+                                            fc::optional<price> ostart_price = fc::optional<price>());
 
       vector<limit_order_object>        get_limit_orders(string a, string b, uint32_t limit)const;
       vector<call_order_object>         get_call_orders(string a, uint32_t limit)const;
@@ -514,7 +514,7 @@ class wallet_api
        * @param id the id of the object to return
        * @returns the requested object
        */
-      std::variant                      get_object(object_id_type id) const;
+      fc::variant                       get_object(object_id_type id) const;
 
       /** Returns the current wallet filename.  
        *
@@ -1431,7 +1431,7 @@ class wallet_api
          share_type daily_pay,
          string name,
          string url,
-         std::variant worker_settings,
+         fc::variant worker_settings,
          bool broadcast = false
          );
 
@@ -1648,7 +1648,7 @@ class wallet_api
       void flood_network(string prefix, uint32_t number_of_transactions);
 
       void network_add_nodes( const vector<string>& nodes );
-      vector< variant > network_get_connected_peers();
+      vector< fc::variant > network_get_connected_peers();
 
       /**
        *  Used to transfer from one set of blinded balances to another
@@ -1668,7 +1668,7 @@ class wallet_api
       void encrypt_keys();
 };
 
-} }
+}
 
 FC_REFLECT( graphene::wallet::key_label, (label)(key) )
 FC_REFLECT( graphene::wallet::blind_balance, (amount)(from)(to)(one_time_key)(blinding_factor)(commitment)(used) )
