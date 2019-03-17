@@ -1117,7 +1117,7 @@ class wallet_api
        * @returns the signed transaction updating the asset
        */
       signed_transaction update_asset(string symbol,
-                                      std::optional<string> new_issuer,
+                                      fc::optional<string> new_issuer,
                                       asset_options new_options,
                                       bool broadcast = false);
 
@@ -1532,7 +1532,7 @@ class wallet_api
        * @return the signed transaction changing your vote proxy settings
        */
       signed_transaction set_voting_proxy(string account_to_modify,
-                                          std::optional<string> voting_account,
+                                          fc::optional<string> voting_account,
                                           bool broadcast = false);
       
       /** Set your vote for the number of witnesses and committee_members in the system.

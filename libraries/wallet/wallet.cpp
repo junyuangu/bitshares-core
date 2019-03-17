@@ -415,7 +415,7 @@ public:
       }
       init_prototype_ops();
 
-      _remote_db->set_block_applied_callback( [this](const variant& block_id )
+      _remote_db->set_block_applied_callback( [this](const fc::variant& block_id )
       {
          on_block_applied( block_id );
       } );
@@ -753,11 +753,11 @@ public:
             account_ids_to_send.push_back( account_id );
             ++it;
          }
-         std::vector< optional< account_object > > accounts = _remote_db->get_accounts(account_ids_to_send);
+         std::vector< fc::optional< account_object > > accounts = _remote_db->get_accounts(account_ids_to_send);
          // server response should be same length as request
          FC_ASSERT( accounts.size() == account_ids_to_send.size() );
          size_t i = 0;
-         for( const optional< account_object >& acct : accounts )
+         for( const fc::optional< account_object >& acct : accounts )
          {
             account_object& old_acct = old_accounts[i];
             if( !acct.valid() )
@@ -1207,7 +1207,7 @@ public:
    } FC_CAPTURE_AND_RETHROW( (issuer)(symbol)(precision)(common)(bitasset_opts)(broadcast) ) }
 
    signed_transaction update_asset(string symbol,
-                                   std::optional<string> new_issuer,
+                                   fc::optional<string> new_issuer,
                                    asset_options new_options,
                                    bool broadcast /* = false */)
    { try {
@@ -1241,7 +1241,7 @@ public:
                                    string new_issuer,
                                    bool broadcast /* = false */)
    { try {
-      optional<asset_object> asset_to_update = find_asset(symbol);
+      fc::optional<asset_object> asset_to_update = find_asset(symbol);
       if (!asset_to_update)
         FC_THROW("No asset with that symbol exists!");
 
@@ -1264,7 +1264,7 @@ public:
                                       bitasset_options new_options,
                                       bool broadcast /* = false */)
    { try {
-      optional<asset_object> asset_to_update = find_asset(symbol);
+      fc::optional<asset_object> asset_to_update = find_asset(symbol);
       if (!asset_to_update)
         FC_THROW("No asset with that symbol exists!");
 
@@ -1285,7 +1285,7 @@ public:
                                                   flat_set<string> new_feed_producers,
                                                   bool broadcast /* = false */)
    { try {
-      optional<asset_object> asset_to_update = find_asset(symbol);
+      fc::optional<asset_object> asset_to_update = find_asset(symbol);
       if (!asset_to_update)
         FC_THROW("No asset with that symbol exists!");
 
@@ -1310,7 +1310,7 @@ public:
                                          price_feed feed,
                                          bool broadcast /* = false */)
    { try {
-      optional<asset_object> asset_to_update = find_asset(symbol);
+      fc::optional<asset_object> asset_to_update = find_asset(symbol);
       if (!asset_to_update)
         FC_THROW("No asset with that symbol exists!");
 
@@ -1333,7 +1333,7 @@ public:
                                           bool broadcast /* = false */)
    { try {
       account_object from_account = get_account(from);
-      optional<asset_object> asset_to_fund = find_asset(symbol);
+      fc::optional<asset_object> asset_to_fund = find_asset(symbol);
       if (!asset_to_fund)
         FC_THROW("No asset with that symbol exists!");
       asset_object core_asset = get_asset(asset_id_type());
@@ -1355,7 +1355,7 @@ public:
                                            string amount,
                                            bool broadcast /* = false */)
    { try {
-      optional<asset_object> asset_pool_to_claim = find_asset(symbol);
+      fc::optional<asset_object> asset_pool_to_claim = find_asset(symbol);
       if (!asset_pool_to_claim)
         FC_THROW("No asset with that symbol exists!");
       asset_object core_asset = get_asset(asset_id_type());
@@ -1380,7 +1380,7 @@ public:
                                  bool broadcast /* = false */)
    { try {
       account_object from_account = get_account(from);
-      optional<asset_object> asset_to_reserve = find_asset(symbol);
+      fc::optional<asset_object> asset_to_reserve = find_asset(symbol);
       if (!asset_to_reserve)
         FC_THROW("No asset with that symbol exists!");
 
@@ -1400,7 +1400,7 @@ public:
                                           price settle_price,
                                           bool broadcast /* = false */)
    { try {
-      optional<asset_object> asset_to_settle = find_asset(symbol);
+      fc::optional<asset_object> asset_to_settle = find_asset(symbol);
       if (!asset_to_settle)
         FC_THROW("No asset with that symbol exists!");
 
@@ -1422,7 +1422,7 @@ public:
                                    string symbol,
                                    bool broadcast /* = false */)
    { try {
-      optional<asset_object> asset_to_settle = find_asset(symbol);
+      fc::optional<asset_object> asset_to_settle = find_asset(symbol);
       if (!asset_to_settle)
         FC_THROW("No asset with that symbol exists!");
 
@@ -1443,7 +1443,7 @@ public:
                                      string additional_collateral,
                                      bool broadcast )
    { try {
-      optional<asset_object> debt_asset = find_asset(debt_symbol);
+      fc::optional<asset_object> debt_asset = find_asset(debt_symbol);
       if (!debt_asset)
         FC_THROW("No asset with that symbol exists!");
       const asset_object& collateral = get_asset(get_object(*debt_asset->bitasset_data_id).options.short_backing_asset);
@@ -1714,7 +1714,7 @@ public:
       flat_set<vote_id_type> new_votes( acct.options.votes );
 
       fc::variants objects = _remote_db->get_objects( query_ids );
-      for( const variant& obj : objects )
+      for( const fc::variant& obj : objects )
       {
          worker_object wo;
          from_variant( obj, wo, GRAPHENE_MAX_NESTED_OBJECTS );
@@ -1885,7 +1885,7 @@ public:
    } FC_CAPTURE_AND_RETHROW( (voting_account)(witness)(approve)(broadcast) ) }
 
    signed_transaction set_voting_proxy(string account_to_modify,
-                                       std::optional<string> voting_account,
+                                       fc::optional<string> voting_account,
                                        bool broadcast /* = false */)
    { try {
       account_object account_object_to_modify = get_account(account_to_modify);
@@ -2210,17 +2210,17 @@ public:
    std::map<string,std::function<string(fc::variant,const fc::variants&)>> get_result_formatters() const
    {
       std::map<string,std::function<string(fc::variant,const fc::variants&)> > m;
-      m["help"] = [](variant result, const fc::variants& a)
+      m["help"] = [](fc::variant result, const fc::variants& a)
       {
          return result.get_string();
       };
 
-      m["gethelp"] = [](variant result, const fc::variants& a)
+      m["gethelp"] = [](fc::variant result, const fc::variants& a)
       {
          return result.get_string();
       };
 
-      m["get_account_history"] = [this](variant result, const fc::variants& a)
+      m["get_account_history"] = [this](fc::variant result, const fc::variants& a)
       {
          auto r = result.as<vector<operation_detail>>( GRAPHENE_MAX_NESTED_OBJECTS );
          std::stringstream ss;
@@ -2237,7 +2237,7 @@ public:
 
          return ss.str();
       };
-      m["get_relative_account_history"] = [this](variant result, const fc::variants& a)
+      m["get_relative_account_history"] = [this](fc::variant result, const fc::variants& a)
       {
          auto r = result.as<vector<operation_detail>>( GRAPHENE_MAX_NESTED_OBJECTS );
          std::stringstream ss;
@@ -2255,7 +2255,7 @@ public:
          return ss.str();
       };
 
-      m["get_account_history_by_operations"] = [this](variant result, const fc::variants& a) {
+      m["get_account_history_by_operations"] = [this](fc::variant result, const fc::variants& a) {
           auto r = result.as<account_history_operation_detail>( GRAPHENE_MAX_NESTED_OBJECTS );
           std::stringstream ss;
           ss << "total_count : ";
@@ -2278,7 +2278,7 @@ public:
           return ss.str();
       };
 
-      m["list_account_balances"] = [this](variant result, const fc::variants& a)
+      m["list_account_balances"] = [this](fc::variant result, const fc::variants& a)
       {
          auto r = result.as<vector<asset>>( GRAPHENE_MAX_NESTED_OBJECTS );
          vector<asset_object> asset_recs;
@@ -2293,7 +2293,7 @@ public:
          return ss.str();
       };
 
-      m["get_blind_balances"] = [this](variant result, const fc::variants& a)
+      m["get_blind_balances"] = [this](fc::variant result, const fc::variants& a)
       {
          auto r = result.as<vector<asset>>( GRAPHENE_MAX_NESTED_OBJECTS );
          vector<asset_object> asset_recs;
@@ -2307,7 +2307,7 @@ public:
 
          return ss.str();
       };
-      m["transfer_to_blind"] = [this](variant result, const fc::variants& a)
+      m["transfer_to_blind"] = [this](fc::variant result, const fc::variants& a)
       {
          auto r = result.as<blind_confirmation>( GRAPHENE_MAX_NESTED_OBJECTS );
          std::stringstream ss;
@@ -2320,7 +2320,7 @@ public:
          }
          return ss.str();
       };
-      m["blind_transfer"] = [this](variant result, const fc::variants& a)
+      m["blind_transfer"] = [this](fc::variant result, const fc::variants& a)
       {
          auto r = result.as<blind_confirmation>( GRAPHENE_MAX_NESTED_OBJECTS );
          std::stringstream ss;
@@ -2333,7 +2333,7 @@ public:
          }
          return ss.str();
       };
-      m["receive_blind_transfer"] = [this](variant result, const fc::variants& a)
+      m["receive_blind_transfer"] = [this](fc::variant result, const fc::variants& a)
       {
          auto r = result.as<blind_receipt>( GRAPHENE_MAX_NESTED_OBJECTS );
          std::stringstream ss;
@@ -2341,7 +2341,7 @@ public:
          ss << as.amount_to_pretty_string( r.amount ) << "  " << r.from_label << "  =>  " << r.to_label  << "  " << r.memo <<"\n";
          return ss.str();
       };
-      m["blind_history"] = [this](variant result, const fc::variants& a)
+      m["blind_history"] = [this](fc::variant result, const fc::variants& a)
       {
          auto records = result.as<vector<blind_receipt>>( GRAPHENE_MAX_NESTED_OBJECTS );
          std::stringstream ss;
@@ -2356,7 +2356,7 @@ public:
          }
          return ss.str();
       };
-      m["get_order_book"] = [](variant result, const fc::variants& a)
+      m["get_order_book"] = [](fc::variant result, const fc::variants& a)
       {
          auto orders = result.as<order_book>( GRAPHENE_MAX_NESTED_OBJECTS );
          auto bids = orders.bids;
@@ -2694,11 +2694,11 @@ public:
    {
       use_network_node_api();
       const auto peers = (*_remote_net_node)->get_connected_peers();
-      vector< variant > result;
+      vector< fc::variant > result;
       result.reserve( peers.size() );
       for( const auto& peer : peers )
       {
-         variant v;
+         fc::variant v;
          fc::to_variant( peer, v, GRAPHENE_MAX_NESTED_OBJECTS );
          result.push_back( v );
       }
@@ -2772,8 +2772,8 @@ public:
    fc::api<database_api>   _remote_db;
    fc::api<network_broadcast_api>   _remote_net_broadcast;
    fc::api<history_api>    _remote_hist;
-   optional< fc::api<network_node_api> > _remote_net_node;
-   optional< fc::api<graphene::debug_witness::debug_api> > _remote_debug;
+   fc::optional< fc::api<network_node_api> > _remote_net_node;
+   fc::optional< fc::api<graphene::debug_witness::debug_api> > _remote_debug;
 
    flat_map<string, operation> _prototype_ops;
 
@@ -2903,7 +2903,7 @@ std::string operation_result_printer::operator()(const asset& a)
    return _wallet.get_asset(a.asset_id).amount_to_pretty_string(a);
 }
 
-}}}
+}}
 
 namespace graphene { namespace wallet {
    vector<brain_key_info> utility::derive_owner_keys_from_brain_key(string brain_key, int number_of_desired_keys)
@@ -2975,7 +2975,7 @@ bool wallet_api::copy_wallet_file(string destination_filename)
    return my->copy_wallet_file(destination_filename);
 }
 
-optional<signed_block_with_info> wallet_api::get_block(uint32_t num)
+fc::optional<signed_block_with_info> wallet_api::get_block(uint32_t num)
 {
    return my->_remote_db->get_block(num);
 }
@@ -3197,8 +3197,8 @@ vector<limit_order_object> wallet_api::get_account_limit_orders(
       const string &base,
       const string &quote,
       uint32_t limit,
-      optional<limit_order_id_type> ostart_id,
-      optional<price> ostart_price)
+      fc::optional<limit_order_id_type> ostart_id,
+      fc::optional<price> ostart_price)
 {
    return my->_remote_db->get_account_limit_orders(name_or_id, base, quote, limit, ostart_id, ostart_price);
 }
@@ -3245,7 +3245,7 @@ string wallet_api::serialize_transaction( signed_transaction tx )const
    return fc::to_hex(fc::raw::pack(tx));
 }
 
-variant wallet_api::get_object( object_id_type id ) const
+fc::variant wallet_api::get_object( object_id_type id ) const
 {
    return my->_remote_db->get_objects({id});
 }
@@ -3484,7 +3484,7 @@ string wallet_api::normalize_brain_key(string s) const
    return detail::normalize_brain_key( s );
 }
 
-variant wallet_api::info()
+fc::variant wallet_api::info()
 {
    return my->info();
 }
@@ -3541,7 +3541,7 @@ signed_transaction wallet_api::create_asset(string issuer,
 }
 
 signed_transaction wallet_api::update_asset(string symbol,
-                                            optional<string> new_issuer,
+                                            fc::optional<string> new_issuer,
                                             asset_options new_options,
                                             bool broadcast /* = false */)
 {
@@ -3671,7 +3671,7 @@ signed_transaction wallet_api::create_worker(
    share_type daily_pay,
    string name,
    string url,
-   variant worker_settings,
+   fc::variant worker_settings,
    bool broadcast /* = false */)
 {
    return my->create_worker( owner_account, work_begin_date, work_end_date,
@@ -3726,7 +3726,7 @@ signed_transaction wallet_api::vote_for_witness(string voting_account,
 }
 
 signed_transaction wallet_api::set_voting_proxy(string account_to_modify,
-                                                optional<string> voting_account,
+                                                fc::optional<string> voting_account,
                                                 bool broadcast /* = false */)
 {
    return my->set_voting_proxy(account_to_modify, voting_account, broadcast);
@@ -3793,7 +3793,7 @@ void wallet_api::network_add_nodes( const vector<string>& nodes )
    my->network_add_nodes( nodes );
 }
 
-vector< variant > wallet_api::network_get_connected_peers()
+vector< fc::variant > wallet_api::network_get_connected_peers()
 {
    return my->network_get_connected_peers();
 }
@@ -4029,7 +4029,7 @@ vector< signed_transaction > wallet_api_impl::import_balance( string name_or_id,
       }
       else
       {
-         optional< private_key_type > key = wif_to_key( wif_key );
+         fc::optional< private_key_type > key = wif_to_key( wif_key );
          FC_ASSERT( key.valid(), "Invalid private key" );
          fc::ecc::public_key pk = key->get_public_key();
          addrs.push_back( pk );
@@ -4715,15 +4715,15 @@ vesting_balance_object_with_info::vesting_balance_object_with_info( const vestin
    allowed_withdraw_time = now;
 }
 
-} } // graphene::wallet
+} // graphene::wallet
 
 namespace fc {
-   void to_variant( const account_multi_index_type& accts, variant& vo, uint32_t max_depth )
+   void to_variant( const account_multi_index_type& accts, fc::variant& vo, uint32_t max_depth )
    {
       to_variant( std::vector<account_object>(accts.begin(), accts.end()), vo, max_depth );
    }
 
-   void from_variant( const variant& var, account_multi_index_type& vo, uint32_t max_depth )
+   void from_variant( const fc::variant& var, account_multi_index_type& vo, uint32_t max_depth )
    {
       const std::vector<account_object>& v = var.as<std::vector<account_object>>( max_depth );
       vo = account_multi_index_type(v.begin(), v.end());
